@@ -1,0 +1,82 @@
+apply plugin: 'com.android.application'
+
+def getTime() {
+    return new Date().format("yyyyMMdd", TimeZone.getDefault());
+}
+
+android {
+    signingConfigs {
+        release {
+            keyAlias 'testrelease'
+            keyPassword 'zxcvbnm'
+            storeFile file('/Users/wangpeng/AndroidStudioProjects/testrelease.jks')
+            storePassword 'zxcvbnm'
+        }
+    }
+    compileSdkVersion 23
+    buildToolsVersion "22.0.1"
+    defaultConfig {
+        applicationId "com.hawk.android.adsdk.demo"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    //打包后应用名称
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            def fileName
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                if (variant.buildType.name.equals('release')) {
+                    fileName = "RELEASE${defaultConfig.versionName}.${getTime()}.apk"
+                } else if (variant.buildType.name.equals('debug')) {
+                    fileName = "DEBUG${defaultConfig.versionName}.${getTime()}.apk"
+                }
+                output.outputFile = new File(outputFile.parent, fileName)
+            }
+
+        }
+    }
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    testCompile 'junit:junit:4.12'
+    //引入admob sdk
+    // For banners
+    compile('com.mopub:mopub-sdk-banner:4.10.0@aar') {
+        transitive = true
+    }
+    // For interstitials
+    compile('com.mopub:mopub-sdk-interstitial:4.10.0@aar') {
+        transitive = true
+    }
+    //引入聚合广告SDK
+    compile(name: 'app-release', ext: 'aar')
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.google.android.gms:play-services-ads:10.0.1'
+    compile 'com.facebook.android:audience-network-sdk:4.18.0'
+}

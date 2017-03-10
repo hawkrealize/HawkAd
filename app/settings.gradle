@@ -1,0 +1,47 @@
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
+def isEmpty(str) {
+    if (str == null) {
+        return true
+    }
+
+    str = str.trim()
+    return str == ""
+}
+
+def initGradleEnvironment() {
+    println "Initialize Gradle Environment Starting  ..."
+
+    Properties properties = new Properties()
+    File property_file = new File(rootDir.getAbsolutePath() + "/local.properties")
+    properties.load(property_file.newDataInputStream())
+
+    gradle.ext.api = properties.getProperty('sdk.api')
+    gradle.ext.sdkDir = properties.getProperty('sdk.dir')
+    if (isEmpty(gradle.sdkDir)) {
+        println "Error: Please set sdk.dir in local.properties .... "
+    }
+
+    def versionCode = properties.getProperty('version.code')
+    if (isEmpty(versionCode)) {
+        versionCode = new Date().format('yyyyMMdd')
+    }
+    gradle.ext.versionCode = versionCode.toInteger()
+
+    gradle.ext.versionName = properties.getProperty('version.name')
+    if (isEmpty(gradle.ext.versionName)) {
+        gradle.ext.versionName = "1.0.12"
+    }
+
+    println "apk version code : " + gradle.ext.versionCode
+    println "apk version name : " + gradle.ext.versionName
+
+    gradle.ext.localDir = properties.getProperty('local.dir')
+
+    println "Initialize Gradle Environment Completed ..."
+}
+
+initGradleEnvironment()
+
+include ':app'

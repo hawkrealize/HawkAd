@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">adsdkDemo</string>
+
+    <string name="app_key">670cb5671c9949a0bbc69d5404604965</string>
+    <string name="banner_ad_unitid">5a756e33373142c99dcee61f70006873</string>
+    <string name="intersitial_ad_unitid">ba3f58d2dc03456b8b6e5dc97f4f1241</string>
+    <string name="native_ad_unitid">19386f9531c941cbbccd0b49ee193106</string>
+</resources>
